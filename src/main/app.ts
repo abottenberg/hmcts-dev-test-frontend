@@ -2,6 +2,7 @@ import * as path from 'path';
 
 import { HTTPError } from './HttpError';
 import { Nunjucks } from './modules/nunjucks';
+import taskRoutes from './routes/taskRoutes';
 
 import * as bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -29,8 +30,11 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', taskRoutes);
+
 glob
   .sync(__dirname + '/routes/**/*.+(ts|js)')
+  .filter(filename => !filename.endsWith('taskRoutes.ts'))
   .map(filename => require(filename))
   .forEach(route => route.default(app));
 

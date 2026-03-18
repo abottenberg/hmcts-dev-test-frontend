@@ -1,0 +1,51 @@
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+
+{% extends "template.njk" %}
+
+{% block content %}
+  <h1 class="govuk-heading-xl">Tasks</h1>
+
+  {% if tasks | length == 0 %}
+
+    <p class="govuk-body">No tasks found.</p>
+
+  {% else %}
+
+  {% set tableRows = [] %}
+      {% for task in tasks %}
+        {% set _ = tableRows.push([
+          { text: task.title },
+          { text: task.status },
+          {html: '<a class="govuk-link--no-underline" href="/tasks/' + task.id + '">View</a>'}
+        ]) %}
+      {% endfor %}
+
+  {{ govukTable({
+    caption: "Your tasks",
+    captionClasses: "govuk-table__caption--m",
+    firstCellIsHeader: true,
+    classes: "govuk-table--small-text-until-tablet",
+    head: [
+      {
+        text: "Title"
+      },
+      {
+        text: "Status"
+      },
+      {
+        text: "Action"
+      }
+    ],
+    rows: tableRows
+  }) }}
+
+  {% endif %}
+
+  {{ govukButton({
+    text: "Add a task",
+    id: "add-task-button",
+    href: "/create-task"
+  }) }}
+
+{% endblock %}

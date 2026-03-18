@@ -1,0 +1,87 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% extends "template.njk" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+
+  {% if errors %}
+    {{ govukErrorSummary({
+      titleText: "There is a problem",
+      errorList: errors
+    }) }}
+  {% endif %}
+
+  <h1 class="govuk-heading-xl">Create a task</h1>
+
+  <form method="post" action="/tasks/create-task">
+
+    {% set titleError = null %}
+    {% set dueDateError = null %}
+    {% if errors %}
+      {% for e in errors %}
+        {% if e.href == "#title" %}
+          {% set titleError = e %}
+        {% endif %}
+        {% if e.href == "#due-date" %}
+          {% set dueDateError = e %}
+          {% set titleErrorMessage = { text: e.text } %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    {% set titleErrorMessage = null %}
+    {% if titleError %}
+
+    {% endif %}
+
+    {% set dueDateErrorMessage = null %}
+    {% if dueDateError %}
+      {% set dueDateErrorMessage = { text: "Enter a valid due date" } %}
+    {% endif %}
+
+    {{ govukInput({
+      id: "task-title",
+      name: "title",
+      label: {
+        text: "Title"
+      },
+      errorMessage: titleErrorMessage
+    }) }}
+
+    {{ govukTextarea({
+          id: "task-description",
+          name: "description",
+          label: {
+            text: "Description"
+          }
+        }) }}
+
+    {{ govukDateInput({
+      id: "task-due-date",
+      fieldset: {
+        legend: {
+          text: "Due date",
+          classes: "govuk-fieldset__legend--s"
+        }
+      },
+      hint: {
+        text: "For example, 27 3 2026"
+      },
+      errorMessage: dueDateErrorMessage
+    }) }}
+
+    <div class="govuk-button-group">
+      {{ govukButton({
+        id: "create-task-button",
+        text: "Create"
+      }) }}
+
+      <a class="govuk-link" href="/tasks">Cancel</a>
+    </div>
+  </form>
+{% endblock %}
